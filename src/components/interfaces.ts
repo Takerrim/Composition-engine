@@ -1,3 +1,5 @@
+import BackgroundLayerComponent from "./BackgroundLayerComponent"
+
 export interface IProps {
   name: string
   type: string
@@ -13,3 +15,5 @@ export interface IPosition {
   x: number
   y: number
 }
+
+export type AnyComponentType = BackgroundLayerComponent

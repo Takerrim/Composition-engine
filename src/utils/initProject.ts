@@ -1,18 +1,19 @@
 import { BackgroundLayerComponent } from '../components'
-import { IProps } from '../components/interfaces'
+import { IProps, AnyComponentType } from '../components/interfaces'
 import { LayerTypes } from '../components/enums'
 
-export default function initProject(node: IProps) {
+export default function initProject(node: IProps, parentLayer: AnyComponentType|null = null) {
+  let component: AnyComponentType|null = null
   if (
     node.type === LayerTypes.MainBackground ||
     node.type === LayerTypes.LayerBackground
   ) {
-    new BackgroundLayerComponent(node)
+    component = new BackgroundLayerComponent(node, parentLayer)
   }
 
   if (node.children) {
     node.children.forEach((childNode) => {
-      initProject(childNode)
+      initProject(childNode, component)
     })
   }
 }

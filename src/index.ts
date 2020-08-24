@@ -1,7 +1,7 @@
 import { initProject } from './utils'
 import config from './config.json'
 
-initProject(config)
+initProject(config as any)
 
 // new BackgroundLayerComponent()
 
