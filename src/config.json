@@ -1,0 +1,47 @@
+{
+  "name": "Project",
+  "type": "Project",
+  "width": 1400,
+  "height": 1000,
+  "children": [
+    {
+      "name": "Background",
+      "type": "main-background",
+      "image_url": "32",
+      "background": null,
+      "width": 1400,
+      "height": 1000,
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "name": "Text block",
+      "type": "layer-background",
+      "image_url": null,
+      "background": "blue",
+      "width": 300,
+      "height": 200,
+      "position": {
+        "x": 150,
+        "y": 200
+      },
+      "children": [
+        {
+          "name": "Layer-1",
+          "type": "text",
+          "text": "Hello world!",
+          "image_url": null,
+          "background": null,
+          "width": 300,
+          "height": 200,
+          "position": {
+            "x": 30,
+            "y": 50
+          }
+        }
+      ]
+    }
+  ]
+}
