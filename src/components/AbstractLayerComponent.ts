@@ -15,6 +15,8 @@ abstract class AbstractLayerComponent {
 
   public parentLayer: AnyComponentType|null = null
 
+  public childLayers: AnyComponentType[] = []
+
   constructor(props: IProps, parentLayer: AnyComponentType|null) {
     if (!props) {
       throw new Error('props is not defined')

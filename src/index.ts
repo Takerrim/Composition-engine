@@ -1,7 +1,12 @@
 import { initProject } from './utils'
 import config from './config.json'
+import makeImage from './utils/makeImage'
 
 initProject(config as any)
+
+document.querySelector('.make-image').addEventListener('click', () => {
+  makeImage(window.layer)
+})
 
 // new BackgroundLayerComponent()
 
