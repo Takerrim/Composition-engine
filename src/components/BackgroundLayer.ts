@@ -1,10 +1,10 @@
 import imageUrl from './image.jpg'
-import AbstractLayerComponent from './AbstractLayerComponent'
+import AbstractLayer from './AbstractLayer'
 import { loadImage } from '../utils'
-import { IProps, AnyComponentType } from './interfaces'
+import { IProps, AnyLayerType } from './interfaces'
 
-export default class BackgroundLayerComponent extends AbstractLayerComponent {
-  constructor(props: IProps, parentLayer: AnyComponentType|null) {
+export default class BackgroundLayer extends AbstractLayer {
+  constructor(props: IProps, parentLayer: AnyLayerType|null) {
     super(props, parentLayer)
     if (this.props.image_url) {
       loadImage(this.ctx, imageUrl)

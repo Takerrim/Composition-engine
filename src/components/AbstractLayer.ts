@@ -1,8 +1,8 @@
-import { IProps, IPosition, AnyComponentType } from './interfaces'
+import { IProps, IPosition, AnyLayerType } from './interfaces'
 import { LayerTypes } from './enums'
-import { dragging } from '../utils'
+import { dragging, setStyles } from '../utils'
 
-abstract class AbstractLayerComponent {
+abstract class AbstractLayer {
   private wrapper: HTMLDivElement = document.createElement('div')
 
   protected canvas: HTMLCanvasElement = document.createElement('canvas')
@@ -13,11 +13,11 @@ abstract class AbstractLayerComponent {
 
   private titleLayerElement: HTMLDivElement = document.createElement('div')
 
-  public parentLayer: AnyComponentType|null = null
+  public parentLayer: AnyLayerType|null = null
 
-  public childLayers: AnyComponentType[] = []
+  public childLayers: AnyLayerType[] = []
 
-  constructor(props: IProps, parentLayer: AnyComponentType|null) {
+  constructor(props: IProps, parentLayer: AnyLayerType|null = null) {
     if (!props) {
       throw new Error('props is not defined')
     }
@@ -60,9 +60,16 @@ abstract class AbstractLayerComponent {
     this.wrapper.removeEventListener('mousedown', this.onMouseDown.bind(this))
   }
 
-  private onMouseEnter() {}
+  private onMouseEnter(e: MouseEvent) {
+    e.stopPropagation()
+    setStyles({ border: '1px solid #5263d0' }, this.wrapper)
+    setStyles({ opacity: 1 }, this.titleLayerElement)
+  }
 
-  private onMouseLeave() {}
+  private onMouseLeave() {
+    setStyles({ border: '1px solid transparent' }, this.wrapper)
+    setStyles({ opacity: 0 }, this.titleLayerElement)
+  }
 
   private setPosition(position: IPosition) {
     this.wrapper.style.left = `${position.x}px`
@@ -76,6 +83,13 @@ abstract class AbstractLayerComponent {
   public get getImageData() {
     return this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
   }
+
+  public get position() {
+    return {
+      x: +this.wrapper.style.left.slice(0, this.wrapper.style.left.length - 2),
+      y: +this.wrapper.style.top.slice(0, this.wrapper.style.top.length - 2),
+    }
+  }
 }
 
-export default AbstractLayerComponent
+export default AbstractLayer

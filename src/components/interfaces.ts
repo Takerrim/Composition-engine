@@ -1,4 +1,4 @@
-import BackgroundLayerComponent from "./BackgroundLayerComponent"
+import { BackgroundLayer, TextLayer } from "./index"
 
 export interface IProps {
   name: string
@@ -9,6 +9,7 @@ export interface IProps {
   height: number
   position: IPosition
   children?: IProps[]
+  text?: string
 }
 
 export interface IPosition {
@@ -16,4 +17,4 @@ export interface IPosition {
   y: number
 }
 
-export type AnyComponentType = BackgroundLayerComponent
+export type AnyLayerType = BackgroundLayer | TextLayer

@@ -1,15 +1,17 @@
-import { AnyComponentType } from "../components/interfaces"
+import { AnyLayerType } from "../components/interfaces"
 
 let output = document.createElement('canvas').getContext('2d')
 
-output.canvas.width = 1200
-output.canvas.height = 800
+export default function makeImage(layer: AnyLayerType) {
+  if (layer.parentLayer === null) {
+    output.canvas.width = layer.props.width
+    output.canvas.height = layer.props.height
+  }
 
-export default function makeImage(layer: AnyComponentType) {
   output.putImageData(
     layer.getImageData,
-    layer.props.position.x + layer.parentLayer?.props.position.x || 0,
-    layer.props.position.y + layer.parentLayer?.props.position.y || 0,
+    layer.position.x + layer.parentLayer?.position.x || 0,
+    layer.position.y + layer.parentLayer?.position.y || 0,
   )
 
   if (layer.childLayers.length > 0) {

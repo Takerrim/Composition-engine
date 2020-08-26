@@ -1,3 +1,4 @@
-import BackgroundLayerComponent from './BackgroundLayerComponent'
+import BackgroundLayer from './BackgroundLayer'
+import TextLayer from './TextLayer'
 
-export { BackgroundLayerComponent }
+export { BackgroundLayer, TextLayer }

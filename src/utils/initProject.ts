@@ -1,25 +1,30 @@
-import { BackgroundLayerComponent } from '../components'
-import { IProps, AnyComponentType } from '../components/interfaces'
+import { BackgroundLayer, TextLayer } from '../components'
+import { IProps, AnyLayerType } from '../components/interfaces'
 import { LayerTypes } from '../components/enums'
 
 export default function initProject(
   node: IProps,
-  parentLayer: AnyComponentType|null = null,
+  parentLayer: AnyLayerType|null = null,
 ) {
-  let component: AnyComponentType|null = null
+  let component: AnyLayerType|null = null
 
   if (
     node.type === LayerTypes.MainBackground ||
     node.type === LayerTypes.LayerBackground
   ) {
-    component = new BackgroundLayerComponent(node, parentLayer)
+    component = new BackgroundLayer(node, parentLayer)
+  } else if  (node.type === LayerTypes.Text) {
+    component = new TextLayer(node, parentLayer)
+  }
 
+  if (component) {
     if (parentLayer) {
       component.parentLayer.childLayers.push(component)
     } else {
       window.layer = component
     }
   }
+
   console.log(component)
   if (node.children) {
     node.children.forEach((childNode) => {
