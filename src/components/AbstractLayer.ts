@@ -13,11 +13,11 @@ abstract class AbstractLayer {
 
   private titleLayerElement: HTMLDivElement = document.createElement('div')
 
-  public parentLayer: AnyLayerType|null = null
+  public parentLayer: AnyLayerType | null = null
 
   public childLayers: AnyLayerType[] = []
 
-  constructor(props: IProps, parentLayer: AnyLayerType|null = null) {
+  constructor(props: IProps, parentLayer: AnyLayerType | null = null) {
     if (!props) {
       throw new Error('props is not defined')
     }

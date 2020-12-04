@@ -1,24 +1,26 @@
-import AbstractLayer from "./AbstractLayer"
-import { IProps, AnyLayerType } from "./interfaces"
+import AbstractLayer from './AbstractLayer'
+import { IProps, AnyLayerType } from './interfaces'
+import setTransparentBackground from '../utils/setTransparentBackground'
 
 class TextLayer extends AbstractLayer {
   public text: string = ''
 
   constructor(props: IProps, parentLayer: AnyLayerType) {
     super(props, parentLayer)
+
     this.text = props.text
-    this.ctx.font = '48px sans-serif'
-    this.canvas.width = this.measureData.width
-    this.canvas.height = 50
+
     this.fillText()
   }
 
   private get measureData() {
+    this.ctx.font
     return this.ctx.measureText(this.text)
   }
 
   private fillText() {
-    this.ctx.fillText(this.text, 0, 0)
+    this.ctx.font = `${this.props.font_size}px sans-serif`
+    this.ctx.fillText(this.text, 0, this.props.font_size)
   }
 
   private strokeText() {
@@ -28,6 +30,13 @@ class TextLayer extends AbstractLayer {
   public changeText(text: string) {
     this.text = text
     this.fillText()
+  }
+
+  public render() {
+    const bg = this.props.background
+      ? this.props.background.split(',')
+      : ['255', '255', '255', '255']
+    setTransparentBackground(this.ctx, bg)
   }
 }
 

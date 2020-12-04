@@ -20,7 +20,7 @@
           "name": "Text block",
           "type": "layer-background",
           "image_url": null,
-          "background": "blue",
+          "background": "24,24,24,1",
           "width": 300,
           "height": 200,
           "position": {
@@ -34,8 +34,10 @@
               "text": "Hello world!",
               "image_url": null,
               "background": null,
-              // "width": 300,
-              // "height": 200,
+              "width": 250,
+              "height": 48,
+              "font_size": 48,
+              "text_color": "#e0e0e0",
               "position": {
                 "x": 30,
                 "y": 50

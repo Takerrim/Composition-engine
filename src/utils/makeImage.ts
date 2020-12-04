@@ -1,4 +1,5 @@
-import { AnyLayerType } from "../components/interfaces"
+import { AnyLayerType } from '../components/interfaces'
+import { TextLayer } from '../components'
 
 let output = document.createElement('canvas').getContext('2d')
 
@@ -8,14 +9,18 @@ export default function makeImage(layer: AnyLayerType) {
     output.canvas.height = layer.props.height
   }
 
+  if (layer instanceof TextLayer) {
+    layer.render()
+  }
+
   output.putImageData(
     layer.getImageData,
     layer.position.x + layer.parentLayer?.position.x || 0,
-    layer.position.y + layer.parentLayer?.position.y || 0,
+    layer.position.y + layer.parentLayer?.position.y || 0
   )
 
   if (layer.childLayers.length > 0) {
-    layer.childLayers.forEach(child => {
+    layer.childLayers.forEach((child) => {
       makeImage(child)
     })
   } else {
@@ -23,6 +28,6 @@ export default function makeImage(layer: AnyLayerType) {
     image.onload = () => {
       document.body.appendChild(image)
     }
-    image.src = output.canvas.toDataURL('image/jpg')
+    image.src = output.canvas.toDataURL('image/png')
   }
 }
