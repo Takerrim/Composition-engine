@@ -19,7 +19,7 @@ abstract class AbstractLayer {
 
   constructor(props: IProps, parentLayer: AnyLayerType | null = null) {
     if (!props) {
-      throw new Error('props is not defined')
+      throw new Error('props are not defined')
     }
     this.props = props
 
@@ -86,8 +86,8 @@ abstract class AbstractLayer {
 
   public get position() {
     return {
-      x: +this.wrapper.style.left.slice(0, this.wrapper.style.left.length - 2),
-      y: +this.wrapper.style.top.slice(0, this.wrapper.style.top.length - 2),
+      x: Number(this.wrapper.style.left.slice(0, this.wrapper.style.left.length - 2)),
+      y: Number(this.wrapper.style.top.slice(0, this.wrapper.style.top.length - 2)),
     }
   }
 }
