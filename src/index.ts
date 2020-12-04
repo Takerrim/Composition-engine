@@ -1,6 +1,7 @@
 import { initProject } from './utils'
 import config from './config.json'
 import makeImage from './utils/makeImage'
+import "@babel/polyfill";
 
 initProject(config as any)
 
