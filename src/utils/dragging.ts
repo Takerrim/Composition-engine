@@ -6,10 +6,10 @@ function dragOver(event: MouseEvent, shiftX: number, shiftY: number) {
       wrapper.style.left = `${0}px`
     } else if (
       event.pageX - shiftX >=
-      wrapper.parentElement.clientWidth - wrapper.clientWidth
+      wrapper.parentElement!.clientWidth - wrapper.clientWidth
     ) {
       wrapper.style.left = `${
-        wrapper.parentElement.clientWidth - wrapper.clientWidth
+        wrapper.parentElement!.clientWidth - wrapper.clientWidth
       }px`
     } else {
       wrapper.style.left = `${event.pageX - shiftX}px`
@@ -19,10 +19,10 @@ function dragOver(event: MouseEvent, shiftX: number, shiftY: number) {
       wrapper.style.top = `${0}px`
     } else if (
       event.pageY - shiftY >=
-      wrapper.parentElement.clientHeight - wrapper.clientHeight
+      wrapper.parentElement!.clientHeight - wrapper.clientHeight
     ) {
       wrapper.style.top = `${
-        wrapper.parentElement.clientHeight - wrapper.clientHeight
+        wrapper.parentElement!.clientHeight - wrapper.clientHeight
       }px`
     } else {
       wrapper.style.top = `${event.pageY - shiftY}px`
@@ -35,7 +35,7 @@ function dragStart(event: MouseEvent, target: HTMLElement) {
 
   wrapper = target
   const rect = wrapper.getBoundingClientRect()
-  const parentRect = wrapper.parentElement.getBoundingClientRect()
+  const parentRect = wrapper.parentElement!.getBoundingClientRect()
   const initialPosition = {
     x: rect.x - parentRect.x + window.scrollX,
     y: rect.y - parentRect.y + window.scrollY,

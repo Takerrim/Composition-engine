@@ -1,15 +1,15 @@
-import { IProps, IPosition, AnyLayerType } from './interfaces'
-import { LayerTypes } from './enums'
-import { dragging, setStyles } from '../utils'
+import { IPosition, AnyLayerType, INodeProps } from './interfaces'
+import { dragging, setStyles } from '@/utils'
+import { NodeTypes } from './enums'
 
 abstract class AbstractLayer {
   private wrapper: HTMLDivElement = document.createElement('div')
 
   protected canvas: HTMLCanvasElement = document.createElement('canvas')
 
-  protected ctx!: CanvasRenderingContext2D
+  protected ctx: CanvasRenderingContext2D
 
-  public props: IProps = {} as IProps
+  public nodeProps: INodeProps = {} as INodeProps
 
   private titleLayerElement: HTMLDivElement = document.createElement('div')
 
@@ -17,70 +17,74 @@ abstract class AbstractLayer {
 
   public childLayers: AnyLayerType[] = []
 
-  constructor(props: IProps, parentLayer: AnyLayerType | null = null) {
-    if (!props) {
-      throw new Error('props are not defined')
+  constructor(nodeProps: INodeProps, parentLayer: AnyLayerType | null = null) {
+    if (!nodeProps) {
+      throw new Error('node is undefined')
     }
-    this.props = props
+    this.nodeProps = nodeProps
 
     this.parentLayer = parentLayer
 
-    this.ctx = this.canvas.getContext('2d')
+    this.ctx = this.canvas.getContext('2d')!
     this.mount()
 
     this.wrapper.addEventListener('mouseenter', this.onMouseEnter.bind(this))
     this.wrapper.addEventListener('mouseleave', this.onMouseLeave.bind(this))
-    this.titleLayerElement.textContent = this.props.name
+    this.titleLayerElement.textContent = this.nodeProps.name
     this.titleLayerElement.classList.add('title-layer')
     this.wrapper.appendChild(this.titleLayerElement)
   }
 
-  private mount() {
+  private mount(): void {
     this.wrapper.appendChild(this.canvas)
-    this.canvas.width = this.props.width
-    this.canvas.height = this.props.height
 
-    if (this.props.type === LayerTypes.MainBackground) {
-      this.wrapper.classList.add('main-background-wrapper')
-    } else {
+    if (this.nodeProps.absoluteBoundingBox) {
+      const { width, height, x, y } = this.nodeProps.absoluteBoundingBox
+      this.canvas.width = width
+      this.canvas.height = height
+      
+      if (this.nodeProps.type !== NodeTypes.RootFrame) {
+        this.setPosition({ x, y })
+      }
+    }
+
+    if (this.parentLayer) {
       this.wrapper.classList.add('layer-wrapper')
       this.wrapper.addEventListener('mousedown', this.onMouseDown.bind(this))
     }
 
-    this.setPosition(this.props.position)
-
     if (this.parentLayer) {
       this.parentLayer.wrapper.appendChild(this.wrapper)
     } else {
-      document.querySelector('.project-wrapper').appendChild(this.wrapper)
+      document.querySelector('.project-container')!.appendChild(this.wrapper)
     }
   }
 
-  public destroy() {
+  public destroy(): void {
     this.wrapper.removeEventListener('mousedown', this.onMouseDown.bind(this))
   }
 
-  private onMouseEnter(e: MouseEvent) {
+  private onMouseEnter(e: MouseEvent): void {
     e.stopPropagation()
     setStyles({ border: '1px solid #5263d0' }, this.wrapper)
     setStyles({ opacity: 1 }, this.titleLayerElement)
   }
 
-  private onMouseLeave() {
+  private onMouseLeave(): void {
     setStyles({ border: '1px solid transparent' }, this.wrapper)
     setStyles({ opacity: 0 }, this.titleLayerElement)
   }
 
-  private setPosition(position: IPosition) {
+  private setPosition(position: IPosition): void {
     this.wrapper.style.left = `${position.x}px`
     this.wrapper.style.top = `${position.y}px`
   }
 
-  private onMouseDown(event: MouseEvent) {
+  private onMouseDown(event: MouseEvent): void {
     dragging.dragStart(event, this.wrapper)
   }
 
-  public get getImageData() {
+  public get getImageData(): ImageData {
     return this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
   }
 

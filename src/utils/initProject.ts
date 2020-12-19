@@ -1,33 +1,29 @@
-import { BackgroundLayer, TextLayer } from '../components'
-import { IProps, AnyLayerType } from '../components/interfaces'
-import { LayerTypes } from '../components/enums'
+import { BackgroundLayer, TextLayer } from '@/entities'
+import { NodeTypes } from '@/entities/enums'
+import { AnyLayerType, INodeProps } from '@/entities/interfaces'
 
 export default function initProject(
-  node: IProps,
+  nodeProps: INodeProps,
   parentLayer: AnyLayerType|null = null,
 ) {
   let component: AnyLayerType|null = null
 
-  if (
-    node.type === LayerTypes.MainBackground ||
-    node.type === LayerTypes.LayerBackground
-  ) {
-    component = new BackgroundLayer(node, parentLayer)
-  } else if  (node.type === LayerTypes.Text) {
-    component = new TextLayer(node, parentLayer)
+  if ([NodeTypes.Frame, NodeTypes.RootFrame].includes(nodeProps.type)) {
+    component = new BackgroundLayer(nodeProps, parentLayer)
+  } else if  (nodeProps.type === NodeTypes.Text) {
+    component = new TextLayer(nodeProps, parentLayer as AnyLayerType)
   }
 
   if (component) {
-    if (parentLayer) {
+    if (component.parentLayer) {
       component.parentLayer.childLayers.push(component)
-    } else {
-      window.layer = component
     }
   }
 
   console.log(component)
-  if (node.children) {
-    node.children.forEach((childNode) => {
+
+  if (nodeProps.children) {
+    nodeProps.children.forEach((childNode) => {
       initProject(childNode, component)
     })
   }
