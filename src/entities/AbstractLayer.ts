@@ -3,11 +3,7 @@ import { dragging, setStyles } from '@/utils'
 import { NodeTypes } from './enums'
 
 abstract class AbstractLayer {
-  private wrapper: HTMLDivElement = document.createElement('div')
-
-  protected canvas: HTMLCanvasElement = document.createElement('canvas')
-
-  protected ctx: CanvasRenderingContext2D
+  public wrapper: HTMLDivElement = document.createElement('div')
 
   public nodeProps: INodeProps = {} as INodeProps
 
@@ -15,7 +11,7 @@ abstract class AbstractLayer {
 
   public parentLayer: AnyLayerType | null = null
 
-  public childLayers: AnyLayerType[] = []
+  public children: AnyLayerType[] = []
 
   constructor(nodeProps: INodeProps, parentLayer: AnyLayerType | null = null) {
     if (!nodeProps) {
@@ -25,9 +21,6 @@ abstract class AbstractLayer {
 
     this.parentLayer = parentLayer
 
-    this.ctx = this.canvas.getContext('2d')!
-    this.mount()
-
     this.wrapper.addEventListener('mouseenter', this.onMouseEnter.bind(this))
     this.wrapper.addEventListener('mouseleave', this.onMouseLeave.bind(this))
     this.titleLayerElement.textContent = this.nodeProps.name
@@ -35,14 +28,11 @@ abstract class AbstractLayer {
     this.wrapper.appendChild(this.titleLayerElement)
   }
 
-  private mount(): void {
-    this.wrapper.appendChild(this.canvas)
+  protected mount(): void {
 
     if (this.nodeProps.absoluteBoundingBox) {
-      const { width, height, x, y } = this.nodeProps.absoluteBoundingBox
-      this.canvas.width = width
-      this.canvas.height = height
-      
+      const { x, y } = this.nodeProps.absoluteBoundingBox
+
       if (this.nodeProps.type !== NodeTypes.RootFrame) {
         this.setPosition({ x, y })
       }
@@ -82,10 +72,6 @@ abstract class AbstractLayer {
 
   private onMouseDown(event: MouseEvent): void {
     dragging.dragStart(event, this.wrapper)
-  }
-
-  public get getImageData(): ImageData {
-    return this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
   }
 
   public get position() {

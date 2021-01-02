@@ -1,46 +1,105 @@
+import { upperToDashed } from '@/utils'
 import AbstractLayer from './AbstractLayer'
 import { INodeProps, AnyLayerType } from './interfaces'
-import setTransparentBackground from '@/utils/setTransparentBackground'
+
+enum NeededStyles {
+  fontSize = 'fontSize',
+  fontFamily = 'fontFamily',
+  fontWeight = 'fontWeight',
+}
 
 class TextLayer extends AbstractLayer {
-  public text: string = ''
+  public svgEl: SVGSVGElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+
+  private textarea: HTMLDivElement = document.createElement('div')
+
+  private text: string = ''
+
+  private foreignObjectEl: SVGForeignObjectElement = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject')
 
   constructor(nodeProps: INodeProps, parentLayer: AnyLayerType) {
     super(nodeProps, parentLayer)
 
-    if (nodeProps.characters) {
-      this.text = nodeProps.characters
-    }
+    this.text = nodeProps.characters as string
 
-    this.fillText()
+    this.mount()
   }
 
-  private get measureData() {
-    this.ctx.font
-    return this.ctx.measureText(this.text)
+  private onInput() {
+    this.text = this.foreignObjectEl.children[0].textContent as string
+
+    setTimeout(() => {
+      const { scrollHeight } = this.textarea
+      this.resize(scrollHeight)
+    }, 0)
   }
 
-  private fillText() {
+  private resize(height: number) {
+      const { width } = this.nodeProps.absoluteBoundingBox!
+
+      this.svgEl.setAttribute('width',  width.toString())
+      this.svgEl.setAttribute('height',  height.toString())
+      this.svgEl.setAttribute('viewBox', `0 0 ${width} ${height}`)
+
+      this.foreignObjectEl.setAttribute('width',  width.toString())
+      this.foreignObjectEl.setAttribute('height', height.toString())
+      this.foreignObjectEl.setAttribute('x', '0')
+      this.foreignObjectEl.setAttribute('y', '0')
+  }
+
+  private setStyles() {
+    const { r, g, b, a } = this.nodeProps.fills[0].color
+    this.foreignObjectEl.setAttribute('color', `rgba(${r}, ${g}, ${b}, ${a})`)
     if (this.nodeProps.style) {
-      this.ctx.font = `${this.nodeProps.style.fontSize}px sans-serif`
-      this.ctx.fillText(this.text, 0, this.nodeProps.style.fontSize)
+      Object.entries(this.nodeProps.style).forEach(([key, value]) => {
+        if ([
+          NeededStyles.fontFamily,
+          NeededStyles.fontSize,
+          NeededStyles.fontWeight
+        ].includes(key as NeededStyles)) {
+          this.foreignObjectEl.setAttribute(`${upperToDashed(key)}`, value)
+        }
+      })
     }
   }
 
-  private strokeText() {
-    this.ctx.strokeText(this.text, 0, 0)
+  protected mount() {
+    super.mount()
+  
+    this.svgEl.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+
+    this.foreignObjectEl.append(this.textarea)
+
+    this.svgEl.append(this.foreignObjectEl)
+
+    if (this.nodeProps.absoluteBoundingBox) {
+      const { height } = this.nodeProps.absoluteBoundingBox
+      this.textarea.style.height = `${height}px`
+      this.resize(height)
+    }
+
+    this.textarea.setAttribute('contenteditable', 'true')
+    this.textarea.classList.add('textarea')
+    this.textarea.textContent = this.text
+    this.textarea.addEventListener('input', this.onInput.bind(this))
+
+    this.setStyles()
+
+    this.wrapper.append(this.svgEl)
   }
 
-  public changeText(text: string) {
-    this.text = text
-    this.fillText()
-  }
+  toImage(): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const svgURL = new XMLSerializer().serializeToString(this.svgEl)
 
-  public render() {
-    const bg = this.nodeProps.backgroundColor
-      ? Object.values(this.nodeProps.backgroundColor)
-      : ['255', '255', '255', '1']
-    setTransparentBackground(this.ctx, bg)
+      const image = new Image()
+      image.onload = () => {
+        resolve(image)
+      }
+
+      image.onerror = reject
+      image.src = `data:image/svg+xml; charset=utf8, ${encodeURIComponent(svgURL)}`
+    })
   }
 }
 

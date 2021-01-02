@@ -1,30 +1,32 @@
 import { BackgroundLayer, TextLayer } from '@/entities'
 import { NodeTypes } from '@/entities/enums'
 import { AnyLayerType, INodeProps } from '@/entities/interfaces'
+import store from '@/store'
 
 export default function initProject(
   nodeProps: INodeProps,
   parentLayer: AnyLayerType|null = null,
 ) {
-  let component: AnyLayerType|null = null
+  let layer: AnyLayerType|null = null
 
   if ([NodeTypes.Frame, NodeTypes.RootFrame].includes(nodeProps.type)) {
-    component = new BackgroundLayer(nodeProps, parentLayer)
+    layer = new BackgroundLayer(nodeProps, parentLayer)
   } else if  (nodeProps.type === NodeTypes.Text) {
-    component = new TextLayer(nodeProps, parentLayer as AnyLayerType)
+    layer = new TextLayer(nodeProps, parentLayer as AnyLayerType)
   }
 
-  if (component) {
-    if (component.parentLayer) {
-      component.parentLayer.childLayers.push(component)
+
+  if (layer) {
+    if (layer.nodeProps.type !== NodeTypes.RootFrame) {
+      layer.parentLayer!.children.push(layer)
+    } else {
+      store.dispatch('project/setLayers', layer)
     }
   }
 
-  console.log(component)
-
   if (nodeProps.children) {
     nodeProps.children.forEach((childNode) => {
-      initProject(childNode, component)
+      initProject(childNode, layer)
     })
   }
 }

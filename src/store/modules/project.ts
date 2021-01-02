@@ -1,17 +1,21 @@
 import { Module } from 'vuex'
 import http from '@/api'
 import { IRootState, IProjectState } from '../interfaces'
-import { INodeProps } from '@/entities/interfaces'
+import { AnyLayerType, INodeProps } from '@/entities/interfaces'
 
 
 export const projectModule: Module<IProjectState, IRootState> = {
   namespaced: true,
   state: {
-    config: {} as INodeProps
+    config: {} as INodeProps,
+    parentLayer: null,
   },
   mutations: {
-    setProjects(state, payload) {
+    setProjects(state, payload: INodeProps) {
       state.config = payload
+    },
+    setLayers(state, payload: AnyLayerType) {
+      state.parentLayer = payload
     },
   },
   actions: {
@@ -22,7 +26,10 @@ export const projectModule: Module<IProjectState, IRootState> = {
       } catch (error) {
         console.error(error)
       }
-    }
+    },
+    setLayers({ commit }, payload: AnyLayerType) {
+      commit('setLayers', payload)
+    },
   }
 }
 

@@ -1,8 +1,8 @@
-import AbstractLayer from './AbstractLayer'
+import AbstractCanvasLayer from './AbstractCanvasLayer'
 // import { loadImage } from '@/utils'
 import { INodeProps, AnyLayerType } from './interfaces'
 
-export default class BackgroundLayer extends AbstractLayer {
+export default class BackgroundLayer extends AbstractCanvasLayer {
   constructor(nodeProps: INodeProps, parentLayer: AnyLayerType | null) {
     super(nodeProps, parentLayer)
     // if (this.node.image_url) {

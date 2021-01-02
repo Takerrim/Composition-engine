@@ -1,33 +1,49 @@
-import { AnyLayerType } from '../components/interfaces'
-import { TextLayer } from '../components'
+import { AnyLayerType } from '@/entities/interfaces'
+import { TextLayer } from '@/entities'
+import { NodeTypes } from '@/entities/enums'
 
-let output = document.createElement('canvas').getContext('2d')
+let output = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D
 
-export default function makeImage(layer: AnyLayerType) {
-  if (layer.parentLayer === null) {
-    output.canvas.width = layer.props.width
-    output.canvas.height = layer.props.height
+export default async function makeImage(layer: AnyLayerType) {
+  if (layer.nodeProps.type === NodeTypes.RootFrame && layer.nodeProps.absoluteBoundingBox) {
+    output.canvas.width = layer.nodeProps.absoluteBoundingBox.width
+    output.canvas.height = layer.nodeProps.absoluteBoundingBox.height
   }
 
-  if (layer instanceof TextLayer) {
-    layer.render()
+  const position = {
+    x: layer.position.x + (layer.parentLayer?.position.x || 0),
+    y: layer.position.y + (layer.parentLayer?.position.y || 0),
   }
 
-  output.putImageData(
-    layer.getImageData,
-    layer.position.x + layer.parentLayer?.position.x || 0,
-    layer.position.y + layer.parentLayer?.position.y || 0
-  )
-
-  if (layer.childLayers.length > 0) {
-    layer.childLayers.forEach((child) => {
-      makeImage(child)
-    })
-  } else {
-    const image = new Image()
-    image.onload = () => {
-      document.body.appendChild(image)
+  try {    
+    if (layer instanceof TextLayer) {
+      const image = await layer.toImage()
+      output.drawImage(
+        image,
+        position.x,
+        position.y,
+      )
+    } else {
+      output.putImageData(
+        layer.getImageData,
+        position.x,
+        position.y,
+      )
     }
-    image.src = output.canvas.toDataURL('image/png')
+  
+  
+    if (layer.children.length > 0) {
+      layer.children.forEach((child) => {
+        makeImage(child)
+      })
+    } else {
+      const image = new Image()
+      image.onload = () => {
+        document.body.appendChild(image)
+      }
+      image.src = output.canvas.toDataURL('image/png')
+    }
+  } catch (error) {
+    console.log(error) 
   }
 }

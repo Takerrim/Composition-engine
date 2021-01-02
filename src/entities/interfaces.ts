@@ -10,6 +10,7 @@ export interface INodeProps {
   absoluteBoundingBox?: IAbsoluteBoundingBox
   characters?: string
   style?: ITextStyles
+  fills: IFills[]
 }
 
 export interface IPosition {
@@ -40,6 +41,10 @@ export interface ITextStyles {
   lineHeightPx: number
   textAlignHorizontal: string
   textAlignVertical: string
+}
+
+export interface IFills {
+  color: IRGBColor
 }
 
 export type AnyLayerType = BackgroundLayer | TextLayer
