@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store, { key } from './store'
 import httpPlugin from '@/plugins/http'
-
+import '@/assets/styles/fonts.css'
 
 // initProject(config as any)
 

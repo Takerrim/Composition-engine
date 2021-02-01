@@ -41,9 +41,6 @@ abstract class AbstractLayer {
     if (this.parentLayer) {
       this.wrapper.classList.add('layer-wrapper')
       this.wrapper.addEventListener('mousedown', this.onMouseDown.bind(this))
-    }
-
-    if (this.parentLayer) {
       this.parentLayer.wrapper.appendChild(this.wrapper)
     } else {
       document.querySelector('.project-container')!.appendChild(this.wrapper)
